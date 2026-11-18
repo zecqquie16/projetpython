@@ -1,2 +1,6 @@
 pandas
 xmltodict
+urllib.request
+urllib.parse
+json
+html

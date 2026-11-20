@@ -23,7 +23,7 @@ class Corpus:
         self.id2doc[doc_id] = document
         self.ndoc += 1
 
-        # Nouvel auteur ? On le crée seulement s'il n'est pas déjà connu
+        # si nouvel auteur On le crée seulement s'il n'est pas déjà connu
         if document.auteur not in self.authors:
             self.authors[document.auteur] = Author(document.auteur)
             self.naut += 1

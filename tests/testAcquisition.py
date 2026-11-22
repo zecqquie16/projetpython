@@ -15,6 +15,7 @@ import main
 from Acquisition import _parser_arxiv, _parser_hn
 from Corpus import Corpus
 from Document import Document
+from tests.base import TestAvecCorpusVierge
 
 REPONSE_HN = {
     "hits": [
@@ -109,8 +110,8 @@ class TestParserArxiv(unittest.TestCase):
 
 
 def un_doc(titre, auteur, texte="Un texte assez long pour passer le filtre."):
-    return {"titre": titre, "auteur": auteur, "date": "2020-01-01T00:00:00Z",
-            "url": "http://x", "texte": texte}
+    return {"type_doc": "Hacker News", "titre": titre, "auteur": auteur,
+            "date": "2020-01-01T00:00:00Z", "url": "http://x", "texte": texte}
 
 
 def silencieux():
@@ -118,7 +119,7 @@ def silencieux():
     return contextlib.redirect_stdout(io.StringIO())
 
 
-class TestConstruireCorpus(unittest.TestCase):
+class TestConstruireCorpus(TestAvecCorpusVierge):
     def test_documents_des_deux_sources(self):
         hn = [un_doc("A", "alice"), un_doc("B", "bob")]
         arxiv = [un_doc("C", "alice")]
@@ -149,7 +150,7 @@ class TestConstruireCorpus(unittest.TestCase):
         self.assertEqual(corpus.ndoc, 0)
 
 
-class TestChargerOuConstruire(unittest.TestCase):
+class TestChargerOuConstruire(TestAvecCorpusVierge):
     def test_csv_absent_acquisition_puis_sauvegarde(self):
         with tempfile.TemporaryDirectory() as dossier:
             chemin = Path(dossier) / "data" / "corpus.csv"
@@ -197,7 +198,7 @@ class TestChargerOuConstruire(unittest.TestCase):
             self.assertFalse(chemin.exists())
 
 
-class TestMenuAuteur(unittest.TestCase):
+class TestMenuAuteur(TestAvecCorpusVierge):
     def creer_corpus(self):
         corpus = Corpus("test")
         corpus.add_document(Document("A", "Alice", "2020-01-01T00:00:00Z", "http://a", "1234"))

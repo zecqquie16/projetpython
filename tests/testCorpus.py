@@ -4,6 +4,7 @@ from pathlib import Path
 
 from Corpus import Corpus
 from Document import Document
+from tests.base import TestAvecCorpusVierge
 
 
 def creer_corpus():
@@ -14,7 +15,7 @@ def creer_corpus():
     return corpus
 
 
-class TestCorpus(unittest.TestCase):
+class TestCorpus(TestAvecCorpusVierge):
     def test_compteurs(self):
         corpus = creer_corpus()
         self.assertEqual(corpus.ndoc, 3)

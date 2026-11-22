@@ -10,7 +10,7 @@ from xml.parsers.expat import ExpatError
 
 from Acquisition import fetch_arxiv, fetch_hackernews
 from Corpus import Corpus
-from Document import Document
+from DocumentFactory import DocumentFactory
 
 THEMATIQUE = "coronavirus"      
 NB_DOCS_PAR_SOURCE = 50
@@ -22,8 +22,7 @@ ERREURS_ACQUISITION = (OSError, ValueError, ExpatError)
 
 
 def construire_corpus(thematique, nb_docs):
-    """Interroge Hacker News et Arxiv puis remplit un Corpus.
-
+    """Interroge Hacker News et Arxiv puis remplit un Corpus
     Si une source est indisponible, on le signale et on continue avec l'autre
     au lieu de faire planter le programme.
     """
@@ -41,9 +40,9 @@ def construire_corpus(thematique, nb_docs):
         for doc in documents:
             if len(doc["texte"]) < MIN_CARACTERES:
                 continue
-            corpus.add_document(
-                Document(doc["titre"], doc["auteur"], doc["date"], doc["url"], doc["texte"])
-            )
+         # ça choisit la bonne classe (HackerNewsDocument ou ArxivDocument)
+            corpus.add_document(DocumentFactory.creer(**doc))
+            
             ajoutes += 1
         print(f"{nom_source} : {ajoutes} document(s) ajouté(s).")
 
@@ -77,6 +76,9 @@ def afficher_apercu(corpus):
     corpus.afficher_par_date(5)
     print("\n--- 5 premiers documents par titre ---")
     corpus.afficher_par_titre(5)
+    print("\n--- Documents avec leur source  ---")
+    for source in corpus.sources():
+        corpus.afficher_liste(3, source)
 
 
 def menu_stats_auteur(corpus):

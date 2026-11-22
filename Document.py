@@ -25,6 +25,22 @@ class Document:
         self.date = convertir_date(date)  # datetime ou None
         self.url = url
         self.texte = texte
+        self.type = "Document"  # TD5 3.2 : chaque classe fille le remplace par sa source
+
+    def getType(self):
+        """Retourne la source du document. Les classes filles redéfinissent cette méthode."""
+        return self.type
+
+    def to_dict(self):
+        """Retourne les champs du document sous forme de dictionnaire . """
+        return {
+            "type_doc": self.getType(),
+            "titre": self.titre,
+            "auteur": self.auteur,
+            "date": self.date.isoformat() if self.date else "",
+            "url": self.url,
+            "texte": self.texte,
+        }
 
     def afficher(self):
         """Affiche toutes les informations du document."""
@@ -35,17 +51,21 @@ class Document:
         print(f"Texte  : {self.texte[:200]}...")
 
     def __str__(self):
-        """Version courte : le titre seulement (utilisé par print(doc))."""
+        """Version courte : le titre seulement."""
         return self.titre
 
 
 class HackerNewsDocument(Document):
     """Document provenant de Hacker News."""
 
-    def __init__(self, titre, auteur, date, url, texte, nb_commentaires):
+    def __init__(self, titre, auteur, date, url, texte, nb_commentaires=0):
         super().__init__(titre, auteur, date, url, texte)
-        self.source = "Hacker News"
+        self.type = "Hacker News"
         self.nb_commentaires = nb_commentaires
+
+    def getType(self):
+        """Retourne la source du document : "Hacker News"."""
+        return self.type
 
     def get_nb_commentaires(self):
         """Retourne le nombre de commentaires du post Hacker News."""
@@ -55,16 +75,28 @@ class HackerNewsDocument(Document):
         """Met à jour le nombre de commentaires du post Hacker News."""
         self.nb_commentaires = nb
 
+    def to_dict(self):
+        """Champs du document + le nombre de commentaires."""
+        donnees = super().to_dict()
+        donnees["nb_commentaires"] = self.nb_commentaires
+        return donnees
+
     def __str__(self):
-        """Version complète : Utilise le titre et le nombre de commentaires (utilisé par print(doc))."""
+        """Version complète : Utilise le titre et le nombre de commentaires."""
         return f"{self.titre} ({self.nb_commentaires} commentaires)"
+
 
 class ArxivDocument(Document):
     """Document provenant d'Arxiv."""
 
-    def __init__(self, titre, auteur, date, url, texte, co_auteurs):
+    def __init__(self, titre, auteur, date, url, texte, co_auteurs=()):
         super().__init__(titre, auteur, date, url, texte)
+        self.type = "Arxiv"
         self.co_auteurs = list(co_auteurs)  # liste des co-auteurs
+
+    def getType(self):
+        """Retourne la source du document : "Arxiv"."""
+        return self.type
 
     def get_co_auteurs(self):
         """Retourne la liste des co-auteurs de l'article Arxiv."""
@@ -79,7 +111,13 @@ class ArxivDocument(Document):
         if co_auteur not in self.co_auteurs:
             self.co_auteurs.append(co_auteur)
 
+    def to_dict(self):
+        """Champs du document + la liste des co-auteurs."""
+        donnees = super().to_dict()
+        donnees["co_auteurs"] = list(self.co_auteurs)
+        return donnees
+
     def __str__(self):
-        """Version complète : Utilise le titre et la liste des co-auteurs (utilisé par print(doc))."""
+        """Version complète : Utilise le titre et la liste des co-auteurs."""
         co_auteurs_str = ", ".join(self.co_auteurs)
         return f"{self.titre} (Co-auteurs : {co_auteurs_str})"

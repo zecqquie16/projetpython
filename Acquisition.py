@@ -45,12 +45,14 @@ def _parser_hn(resultat):
         # Les posts texte n'ont pas d'url externe : on pointe vers la page Hacker News
         url = hit.get("url") or URL_ITEM_HN + str(hit.get("objectID", ""))
         documents.append({
+            "type_doc": "Hacker News",
             "titre": titre,
             "auteur": hit.get("author") or AUTEUR_INCONNU,
             "date": hit.get("created_at"),
             "url": url,
             "texte": texte,
-        })
+            "nb_commentaires": hit.get("num_comments") or 0,
+        })    
     return documents
 
 
@@ -70,12 +72,15 @@ def _parser_arxiv(contenu_xml):
             auteurs = [auteurs]
         # Un document n'a qu'un auteur dans notre modèle : on garde le premier
         premier_auteur = auteurs[0].get("name") if auteurs else None
+        co_auteurs = [a.get("name") for a in auteurs[1:] if a.get("name")]
         documents.append({
+            "type_doc": "Arxiv",
             "titre": _nettoyer_arxiv(entree.get("title") or ""),
             "auteur": premier_auteur or AUTEUR_INCONNU,
             "date": entree.get("published"),
             "url": entree.get("id") or "",
             "texte": _nettoyer_arxiv(entree.get("summary") or ""),
+            "co_auteurs": co_auteurs,
         })
     return documents
 
@@ -99,3 +104,4 @@ def fetch_arxiv(keyword, n=50):
     with urllib.request.urlopen(URL_ARXIV + parametres, timeout=TIMEOUT_SECONDES) as reponse:
         contenu = reponse.read()
     return _parser_arxiv(contenu)
+        

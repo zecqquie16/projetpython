@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 
 from Corpus import Corpus
 from Document import Document, convertir_date
+from tests.base import TestAvecCorpusVierge
 
 
 def sortie_de(fonction, *args):
@@ -40,8 +41,9 @@ class TestDocument(unittest.TestCase):
         self.assertEqual(str(doc), "Mon titre")
 
 
-class TestAffichagesCorpus(unittest.TestCase):
+class TestAffichagesCorpus(TestAvecCorpusVierge):
     def setUp(self):
+        super().setUp()
         self.corpus = Corpus("test")
         self.corpus.add_document(Document("banana", "Alice", "2024-01-01T00:00:00Z", "http://1", "aaaa"))
         self.corpus.add_document(Document("Apple", "Bob", "2024-03-01T00:00:00Z", "http://2", "bb"))
@@ -62,8 +64,9 @@ class TestAffichagesCorpus(unittest.TestCase):
         self.assertEqual(len(sortie_de(self.corpus.afficher_par_titre, 50)), 3)
 
 
-class TestStatsAuteur(unittest.TestCase):
+class TestStatsAuteur(TestAvecCorpusVierge):
     def setUp(self):
+        super().setUp()
         self.corpus = Corpus("test")
         self.corpus.add_document(Document("A", "Alice", "2024-01-01T00:00:00Z", "http://1", "1234"))
         self.corpus.add_document(Document("B", "Alice", "2024-01-02T00:00:00Z", "http://2", "12"))

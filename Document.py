@@ -37,3 +37,24 @@ class Document:
     def __str__(self):
         """Version courte : le titre seulement (utilisé par print(doc))."""
         return self.titre
+
+
+class HackerNewsDocument(Document):
+    """Document provenant de Hacker News."""
+
+    def __init__(self, titre, auteur, date, url, texte, nb_commentaires):
+        super().__init__(titre, auteur, date, url, texte)
+        self.source = "Hacker News"
+        self.nb_commentaires = nb_commentaires
+
+    def get_nb_commentaires(self):
+        """Retourne le nombre de commentaires du post Hacker News."""
+        return self.nb_commentaires
+
+    def set_nb_commentaires(self, nb):
+        """Met à jour le nombre de commentaires du post Hacker News."""
+        self.nb_commentaires = nb
+
+    def __str__(self):
+        """Version complète : Utilise le titre et le nombre de commentaires (utilisé par print(doc))."""
+        return f"{self.titre} ({self.nb_commentaires} commentaires)"

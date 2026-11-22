@@ -58,3 +58,28 @@ class HackerNewsDocument(Document):
     def __str__(self):
         """Version complète : Utilise le titre et le nombre de commentaires (utilisé par print(doc))."""
         return f"{self.titre} ({self.nb_commentaires} commentaires)"
+
+class ArxivDocument(Document):
+    """Document provenant d'Arxiv."""
+
+    def __init__(self, titre, auteur, date, url, texte, co_auteurs):
+        super().__init__(titre, auteur, date, url, texte)
+        self.co_auteurs = list(co_auteurs)  # liste des co-auteurs
+
+    def get_co_auteurs(self):
+        """Retourne la liste des co-auteurs de l'article Arxiv."""
+        return self.co_auteurs
+
+    def set_co_auteurs(self, co_auteurs):
+        """Met à jour la liste des co-auteurs de l'article Arxiv."""
+        self.co_auteurs = list(co_auteurs)
+
+    def add_co_auteur(self, co_auteur):
+        """Ajoute un co-auteur à la liste des co-auteurs de l'article Arxiv, si et seulement s'il n'est pas déjà présent."""
+        if co_auteur not in self.co_auteurs:
+            self.co_auteurs.append(co_auteur)
+
+    def __str__(self):
+        """Version complète : Utilise le titre et la liste des co-auteurs (utilisé par print(doc))."""
+        co_auteurs_str = ", ".join(self.co_auteurs)
+        return f"{self.titre} (Co-auteurs : {co_auteurs_str})"
